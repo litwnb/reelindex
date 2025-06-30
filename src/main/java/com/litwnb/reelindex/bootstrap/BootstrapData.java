@@ -32,7 +32,8 @@ public class BootstrapData implements CommandLineRunner {
             List<MovieCSV> records = movieCsvService.convertCSV(csvFile);
 
             records.forEach(movieCSV -> {
-                Genre genre = switch (Arrays.stream(movieCSV.getGenre().split(",")).findFirst().get()) {
+                Genre genre = switch (Arrays.stream(movieCSV.getGenre().split(","))
+                        .findFirst().orElseThrow()) {
                     case "Adventure" -> Genre.ADVENTURE;
                     case "Action" -> Genre.ACTION;
                     case "Biography" -> Genre.BIOGRAPHY;
@@ -60,12 +61,12 @@ public class BootstrapData implements CommandLineRunner {
                                 .runtime(movieCSV.getRuntime())
                                 .genre(genre)
                                 .overview(movieCSV.getOverview())
+                                .imdbScore(movieCSV.getRating())
                                 .metaScore(movieCSV.getMetaScore())
                                 .director(movieCSV.getDirector())
                                 .posterLink(movieCSV.getPosterLink())
                         .build());
             });
-
         }
     }
 }

@@ -22,11 +22,11 @@ public class MovieCSV {
     @CsvBindByName(column = "Genre")
     private String genre;
     @CsvBindByName(column = "IMDB_Rating")
-    private String rating;
+    private Float rating;
     @CsvBindByName(column = "Overview")
     private String overview;
     @CsvBindByName(column = "Meta_score")
-    private Float metaScore;
+    private Integer metaScore;
     @CsvBindByName(column = "Director")
     private String director;
     @CsvBindByName(column = "Star1")

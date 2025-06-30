@@ -20,7 +20,8 @@ public class MovieDTO {
     @NotNull
     private Genre genre;
     private String overview;
-    private Float metaScore;
+    private Float imdbScore;
+    private Integer metaScore;
     @NotBlank
     private String director;
     private String posterLink;

@@ -38,12 +38,17 @@ public class Movie {
 
     @NotBlank
     private String runtime;
+
     @NotNull
     @JdbcTypeCode(value = SqlTypes.SMALLINT)
     private Genre genre;
+
     @Column(length = 500)
     private String overview;
-    private Float metaScore;
+
+    private Float imdbScore;
+    private Integer metaScore;
+
     @NotBlank
     private String director;
     private String posterLink;
