@@ -3,8 +3,8 @@ package com.litwnb.reelindex.controller;
 import com.litwnb.reelindex.model.Genre;
 import com.litwnb.reelindex.model.MovieDTO;
 import com.litwnb.reelindex.service.MovieService;
-import com.litwnb.reelindex.util.BookNotFoundException;
 import com.litwnb.reelindex.util.MovieErrorResponse;
+import com.litwnb.reelindex.util.MovieNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ public class MovieController {
         return movieService.getMovieById(movieId);
     }
 
-    @ExceptionHandler(BookNotFoundException.class)
+    @ExceptionHandler(MovieNotFoundException.class)
     private ResponseEntity<MovieErrorResponse> handleException() {
         MovieErrorResponse response = new MovieErrorResponse(
                 "Movie with this id was not found",
