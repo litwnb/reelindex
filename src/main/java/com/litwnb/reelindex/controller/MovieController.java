@@ -3,12 +3,13 @@ package com.litwnb.reelindex.controller;
 import com.litwnb.reelindex.model.Genre;
 import com.litwnb.reelindex.model.MovieDTO;
 import com.litwnb.reelindex.service.MovieService;
+import com.litwnb.reelindex.util.BookNotFoundException;
+import com.litwnb.reelindex.util.MovieErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PagedModel;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -30,6 +31,15 @@ public class MovieController {
 
     @GetMapping(value = MOVIE_ID)
     public MovieDTO getMovieById(@PathVariable("movieId") UUID movieId) {
-        return movieService.getMovieById(movieId).orElseThrow();
+        return movieService.getMovieById(movieId);
+    }
+
+    @ExceptionHandler(BookNotFoundException.class)
+    private ResponseEntity<MovieErrorResponse> handleException() {
+        MovieErrorResponse response = new MovieErrorResponse(
+                "Movie with this id was not found",
+                System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

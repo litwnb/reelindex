@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface MovieService {
     Page<MovieDTO> listMovies(String movieTitle, String director, Genre genre, Integer pageNumber, Integer moviesPerPage);
 
-    Optional<MovieDTO> getMovieById(UUID id);
+    MovieDTO getMovieById(UUID id);
 }

@@ -5,6 +5,7 @@ import com.litwnb.reelindex.mapper.MovieMapper;
 import com.litwnb.reelindex.model.Genre;
 import com.litwnb.reelindex.model.MovieDTO;
 import com.litwnb.reelindex.repository.MovieRepository;
+import com.litwnb.reelindex.util.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,8 +60,8 @@ public class MovieServiceJPA implements MovieService {
     }
 
     @Override
-    public Optional<MovieDTO> getMovieById(UUID id) {
-        return Optional.ofNullable(movieMapper.movieToMovieDto(movieRepository.findById(id)
-                .orElse(null)));
+    public MovieDTO getMovieById(UUID id) {
+        return movieMapper.movieToMovieDto(movieRepository.findById(id)
+                .orElseThrow(BookNotFoundException::new));
     }
 }
