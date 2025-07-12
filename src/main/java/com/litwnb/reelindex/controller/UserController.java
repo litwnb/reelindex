@@ -8,8 +8,7 @@ import com.litwnb.reelindex.util.UsernameOccupiedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,9 +22,8 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public UserPrincipal getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (UserPrincipal) authentication.getPrincipal();
+    public UserPrincipal getCurrentUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return userPrincipal;
     }
 
     @ExceptionHandler(UsernameOccupiedException.class)
