@@ -14,14 +14,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
+    private static final String REGISTER_PATH = "/register";
+    private static final String USER_PATH = "/user";
+
     private final UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping(REGISTER_PATH)
     public UserPrincipal register(@RequestBody User user) {
         return new UserPrincipal(userService.register(user));
     }
 
-    @GetMapping("/user")
+    @GetMapping(USER_PATH)
     public UserPrincipal getCurrentUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return userPrincipal;
     }
