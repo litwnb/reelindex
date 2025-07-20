@@ -1,10 +1,7 @@
 package com.litwnb.reelindex.entity;
 
 import com.litwnb.reelindex.model.Genre;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,6 +9,8 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -24,8 +23,8 @@ import java.util.UUID;
 public class Movie {
     @Id
     @GeneratedValue(generator = "UUID")
-    @JdbcTypeCode(SqlTypes.VARCHAR)
-    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(columnDefinition = "CHAR(36)", nullable = false)
     private UUID id;
 
     @NotBlank
@@ -52,4 +51,10 @@ public class Movie {
     @NotBlank
     private String director;
     private String posterLink;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "movie",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<MovieRating> ratings = new HashSet<>();
 }

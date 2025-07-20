@@ -22,17 +22,24 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue(generator = "UUID")
-    @JdbcTypeCode(SqlTypes.VARCHAR)
-    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(columnDefinition = "CHAR(36)", nullable = false)
     private UUID id;
 
     @NotBlank
     private String username;
     private String password;
 
+    @Builder.Default
     @ManyToMany @Fetch(FetchMode.JOIN)
     @JoinTable(name = "user_watchlist",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn (name = "movie_id"))
     private Set<Movie> watchlist = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true) @Fetch(value = FetchMode.JOIN)
+    private Set<MovieRating> ratings = new HashSet<>();
 }
