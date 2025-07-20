@@ -30,8 +30,8 @@ public class MovieController {
     }
 
     @GetMapping(value = MOVIE_ID)
-    public MovieDTO getMovieById(@PathVariable("movieId") UUID movieId) {
-        return movieService.getMovieById(movieId);
+    public ResponseEntity<MovieDTO> getMovieById(@PathVariable("movieId") UUID movieId) {
+        return ResponseEntity.ok(movieService.getMovieById(movieId));
     }
 
     @ExceptionHandler(MovieNotFoundException.class)

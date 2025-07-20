@@ -1,6 +1,8 @@
 package com.litwnb.reelindex.controller;
 
 import com.litwnb.reelindex.entity.User;
+import com.litwnb.reelindex.mapper.UserMapper;
+import com.litwnb.reelindex.model.UserDTO;
 import com.litwnb.reelindex.model.UserPrincipal;
 import com.litwnb.reelindex.service.UserService;
 import com.litwnb.reelindex.util.MovieErrorResponse;
@@ -18,15 +20,16 @@ public class UserController {
     private static final String USER_PATH = "/user";
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @PostMapping(REGISTER_PATH)
-    public UserPrincipal register(@RequestBody User user) {
-        return new UserPrincipal(userService.register(user));
+    public ResponseEntity<UserDTO> register(@RequestBody User user) {
+        return ResponseEntity.ok(userMapper.userToUserDto(userService.register(user)));
     }
 
     @GetMapping(USER_PATH)
-    public UserPrincipal getCurrentUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return userPrincipal;
+    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(userMapper.userToUserDto(userPrincipal.getUser()));
     }
 
     @ExceptionHandler(UsernameOccupiedException.class)

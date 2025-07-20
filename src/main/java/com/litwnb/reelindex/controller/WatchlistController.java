@@ -1,5 +1,6 @@
 package com.litwnb.reelindex.controller;
 
+import com.litwnb.reelindex.model.MovieDTO;
 import com.litwnb.reelindex.model.UserPrincipal;
 import com.litwnb.reelindex.service.WatchlistService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -19,7 +21,7 @@ public class WatchlistController {
 
 
     @GetMapping(WATCHLIST_PATH)
-    public ResponseEntity<?> getWatchlist(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<Set<MovieDTO>> getWatchlist(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(watchlistService.getWatchlist(userPrincipal.getUser().getId()));
     }
 
