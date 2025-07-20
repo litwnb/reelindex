@@ -35,6 +35,7 @@ public class WatchlistServiceJPA implements WatchlistService {
     }
 
     @Override
+    @Transactional
     public void addMovieToWatchlist(UUID userId, UUID movieId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
@@ -46,6 +47,7 @@ public class WatchlistServiceJPA implements WatchlistService {
     }
 
     @Override
+    @Transactional
     public void removeMovieFromWatchlist(UUID userId, UUID movieId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
