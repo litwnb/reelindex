@@ -47,6 +47,7 @@ public class Movie {
 
     private Float imdbScore;
     private Integer metaScore;
+    private double averageRating;
 
     @NotBlank
     private String director;

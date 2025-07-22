@@ -22,6 +22,7 @@ public class MovieDTO {
     private String overview;
     private Float imdbScore;
     private Integer metaScore;
+    private double averageRating;
     @NotBlank
     private String director;
     private String posterLink;

@@ -1,5 +1,6 @@
 package com.litwnb.reelindex.service;
 
+import com.litwnb.reelindex.entity.Movie;
 import com.litwnb.reelindex.entity.MovieRating;
 import com.litwnb.reelindex.entity.MovieRatingKey;
 import com.litwnb.reelindex.model.MovieRatingDTO;
@@ -7,6 +8,7 @@ import com.litwnb.reelindex.model.UserMovieRatingDTO;
 import com.litwnb.reelindex.repository.MovieRatingRepository;
 import com.litwnb.reelindex.repository.MovieRepository;
 import com.litwnb.reelindex.repository.UserRepository;
+import com.litwnb.reelindex.util.MovieNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +44,8 @@ public class MovieRatingServiceJPA implements MovieRatingService {
         movieRating.setRating(rating);
         movieRating.setRatedAt(LocalDateTime.now());
         ratingRepository.save(movieRating);
+
+        updateMovieAverageRating(movieId);
     }
 
     @Override
@@ -73,5 +77,15 @@ public class MovieRatingServiceJPA implements MovieRatingService {
                         rating.getRating(),
                         rating.getRatedAt()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateMovieAverageRating(UUID movieId) {
+        Double avg = ratingRepository.averageForMovie(movieId);
+        double finalAvg = avg == null ? 0.0 : avg;
+
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(MovieNotFoundException::new);
+        movie.setAverageRating(finalAvg);
     }
 }
