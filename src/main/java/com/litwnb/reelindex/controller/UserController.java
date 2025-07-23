@@ -1,12 +1,13 @@
 package com.litwnb.reelindex.controller;
 
-import com.litwnb.reelindex.entity.User;
 import com.litwnb.reelindex.mapper.UserMapper;
+import com.litwnb.reelindex.model.ChangePasswordRequest;
 import com.litwnb.reelindex.model.UserDTO;
 import com.litwnb.reelindex.model.UserPrincipal;
 import com.litwnb.reelindex.service.UserService;
 import com.litwnb.reelindex.util.MovieErrorResponse;
 import com.litwnb.reelindex.util.UsernameOccupiedException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,23 @@ public class UserController {
     private final UserMapper userMapper;
 
     @PostMapping(REGISTER_PATH)
-    public ResponseEntity<UserDTO> register(@RequestBody User user) {
-        return ResponseEntity.ok(userMapper.userToUserDto(userService.register(user)));
+    public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO newUser) {
+        return ResponseEntity.ok(userService.register(newUser));
     }
 
     @GetMapping(USER_PATH)
     public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(userMapper.userToUserDto(userPrincipal.getUser()));
+    }
+
+    @PostMapping(USER_PATH)
+    public ResponseEntity<?> changeUserPassword(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                @Valid @RequestBody ChangePasswordRequest request) {
+        userService.changePassword(userPrincipal.getUsername(),
+                                   request.getCurrentPassword(),
+                                   request.getNewPassword(),
+                                   request.getConfirmNewPassword());
+        return ResponseEntity.ok("Password successfully changed.");
     }
 
     @ExceptionHandler(UsernameOccupiedException.class)
