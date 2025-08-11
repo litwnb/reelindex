@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Movie Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+<nav class="bg-gray-800 p-4 text-white flex justify-between items-center">
+    <div class="flex items-center gap-6">
+        <h1 class="font-bold text-2xl">Reelindex</h1>
+        <a href="/index.html" class="hover:underline">Movies</a>
+        <a href="/ratings.html" class="hover:underline">My Ratings</a>
+        <a href="/watchlist.html" class="hover:underline">Watchlist</a>
+    </div>
+    <div class="flex gap-6">
+        <a href="/user.html" class="hover:underline">Profile</a>
+        <a href="/change-password.html" class="hover:underline">Change Password</a>
+    </div>
+</nav>
+<div class="max-w-3xl mx-auto py-8">
+    <div id="movieDetails" class="bg-white p-6 rounded-lg shadow"></div>
+    <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-2">Your Rating:</h3>
+        <div id="ratingForm" class="flex gap-1"></div>
+        <p id="ratingStatus" class="text-green-600 mt-2 hidden"></p>
+    </div>
+    <div class="mt-6">
+        <button id="watchlistBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+            Add to Watchlist
+        </button>
+        <p id="watchlistStatus" class="mt-2 text-green-600 hidden"></p>
+    </div>
+</div>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const movieId = params.get("id");
+
+    async function fetchMovie() {
+        const res = await fetch(`/api/movies/${movieId}`);
+        if (!res.ok) {
+            document.getElementById("movieDetails").innerHTML = `<p class="text-red-500">Movie not found</p>`;
+            return;
+        }
+        const movie = await res.json();
+        document.getElementById("movieDetails").innerHTML = `
+        <h1 class="text-3xl font-bold">${movie.title}</h1>
+        <p class="text-gray-500">${movie.releaseYear} • ${movie.genre}</p>
+        <p class="mt-4">${movie.overview || 'No overview available.'}</p>
+        <p class="mt-4"><strong>Director:</strong> ${movie.director}</p>
+        <p class="mt-2"><strong>IMDb:</strong> ${movie.imdbScore || 'N/A'} | <strong>Metascore:</strong> ${movie.metaScore || 'N/A'}</p>
+        <p class="mt-2"><strong>Average Rating:</strong> ${movie.averageRating?.toFixed(2) || 'N/A'}</p>
+    `;
+        renderRatingStars();
+        loadUserRating();
+        checkWatchlist();
+    }
+
+    function renderRatingStars(currentRating = 0) {
+        const container = document.getElementById("ratingForm");
+        container.innerHTML = "";
+        for (let i = 1; i <= 10; i++) {
+            const star = document.createElement("button");
+            star.innerHTML = i <= currentRating ? "⭐" : "☆";
+            star.className = "text-2xl";
+            star.onclick = () => submitRating(i);
+            container.appendChild(star);
+        }
+    }
+
+    async function loadUserRating() {
+        const res = await fetch(`/api/user/ratings/${movieId}`);
+        if (res.ok) {
+            const rating = await res.json();
+            renderRatingStars(rating);
+        }
+    }
+
+    async function submitRating(value) {
+        const res = await fetch(`/api/user/ratings`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ movieId, rating: value })
+        });
+        if (res.ok) {
+            document.getElementById("ratingStatus").textContent = "Rating submitted!";
+            document.getElementById("ratingStatus").classList.remove("hidden");
+            renderRatingStars(value);
+        }
+    }
+
+    async function checkWatchlist() {
+        const res = await fetch(`/api/user/watchlist`);
+        if (res.ok) {
+            const watchlist = await res.json();
+            const inList = watchlist.some(m => m.id === movieId);
+            const btn = document.getElementById("watchlistBtn");
+            btn.textContent = inList ? "Remove from Watchlist" : "Add to Watchlist";
+            btn.onclick = () => toggleWatchlist(inList);
+        }
+    }
+
+    async function toggleWatchlist(inList) {
+        const method = inList ? "DELETE" : "POST";
+        const params = inList ? `?movieId=${movieId}` : "";
+        const body = inList ? null : new URLSearchParams({ movieId });
+
+        const res = await fetch(`/api/user/watchlist${params}`, {
+            method,
+            headers: method === "POST" ? { "Content-Type": "application/x-www-form-urlencoded" } : undefined,
+            body
+        });
+
+        if (res.ok) {
+            document.getElementById("watchlistStatus").textContent =
+                inList ? "Movie removed from watchlist" : "Movie added to watchlist";
+            document.getElementById("watchlistStatus").classList.remove("hidden");
+            checkWatchlist();
+        }
+    }
+
+    fetchMovie();
+</script>
+</body>
+</html>

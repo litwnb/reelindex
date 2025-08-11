@@ -8,39 +8,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/user/watchlist")
 @RequiredArgsConstructor
 public class WatchlistController {
-    private static final String WATCHLIST_PATH = "/user/watchlist";
-
     private final WatchlistService watchlistService;
 
-
-    @GetMapping(WATCHLIST_PATH)
+    @GetMapping()
     public ResponseEntity<Set<MovieDTO>> getWatchlist(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(watchlistService.getWatchlist(userPrincipal.getUser().getId()));
     }
 
-    @PostMapping(WATCHLIST_PATH)
-    public ResponseEntity<?> addMovie(@RequestParam Map<String, String> requestBody,
-                                      @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        UUID movieId = UUID.fromString(requestBody.get("movieId"));
-        UUID userId = userPrincipal.getUser().getId();
-
-        watchlistService.addMovieToWatchlist(userId, movieId);
+    @PostMapping()
+    public ResponseEntity<String> addMovie(@RequestParam String movieId,
+                                           @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        watchlistService.addMovieToWatchlist(userPrincipal.getUser().getId(), UUID.fromString(movieId));
         return ResponseEntity.ok("Movie added");
     }
 
-    @DeleteMapping(WATCHLIST_PATH)
-    public ResponseEntity<?> deleteMovie(@RequestParam String movieId,
-                                         @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        UUID userId = userPrincipal.getUser().getId();
-
-        watchlistService.removeMovieFromWatchlist(userId, UUID.fromString(movieId));
+    @DeleteMapping("/{movieId}")
+    public ResponseEntity<String> deleteMovie(@PathVariable String movieId,
+                                              @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        watchlistService.removeMovieFromWatchlist(userPrincipal.getUser().getId(), UUID.fromString(movieId));
         return ResponseEntity.ok("Movie removed");
     }
 }

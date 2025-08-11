@@ -28,6 +28,10 @@ public class UserService {
         return userMapper.userToUserDto(userRepository.save(userMapper.userDtoToUser(user)));
     }
 
+    public UserDTO getUser(String username) {
+        return userMapper.userToUserDto(userRepository.findByUsername(username));
+    }
+
     @Transactional
     public void changePassword(String username, String currentPassword, String newPassword, String confirmNewPassword) {
         User user = userRepository.findByUsername(username);

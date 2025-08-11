@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Watchlist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+<nav class="bg-gray-800 p-4 text-white flex justify-between items-center">
+    <div class="flex items-center gap-6">
+        <h1 class="font-bold text-2xl">Reelindex</h1>
+        <a href="/index.html" class="hover:underline">Movies</a>
+        <a href="/ratings.html" class="hover:underline">My Ratings</a>
+        <a href="/watchlist.html" class="hover:underline">Watchlist</a>
+    </div>
+    <div class="flex gap-6">
+        <a href="/user.html" class="hover:underline">Profile</a>
+        <a href="/change-password.html" class="hover:underline">Change Password</a>
+    </div>
+</nav>
+<div class="max-w-5xl mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6">My Watchlist</h1>
+    <div id="watchlist" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <form id="addMovieForm" class="mt-6 flex gap-2">
+        <input type="text" name="movieId" placeholder="Movie ID" class="border border-gray-300 rounded p-2 flex-grow" required>
+        <button type="submit" class="bg-green-500 text-white px-4 rounded hover:bg-green-600">Add Movie</button>
+    </form>
+</div>
+<script>
+    async function loadWatchlist() {
+        const res = await fetch('/api/user/watchlist');
+        if (!res.ok) {
+            document.getElementById('watchlist').textContent = 'Failed to load watchlist.';
+            return;
+        }
+        const watchlist = await res.json();
+        const container = document.getElementById('watchlist');
+        container.innerHTML = '';
+        watchlist.forEach(m => {
+            const el = document.createElement('div');
+            el.className = 'bg-white rounded shadow p-4 flex justify-between items-center';
+            el.innerHTML = `
+            <div>
+                <h2 class="text-xl font-semibold">${m.title}</h2>
+                <p class="text-gray-600">${m.releaseYear} • ${m.genre}</p>
+            </div>
+            <div class="flex gap-2">
+                <a href="/movie.html?id=${m.id}" class="text-blue-500 hover:underline">View</a>
+                <button class="text-red-600 hover:underline" onclick="removeMovie('${m.id}')">Remove</button>
+            </div>
+        `;
+            container.appendChild(el);
+        });
+    }
+
+    async function removeMovie(movieId) {
+        await fetch(`/api/user/watchlist?movieId=${movieId}`, { method: 'DELETE' });
+        loadWatchlist();
+    }
+
+    document.getElementById('addMovieForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const movieId = formData.get('movieId');
+        await fetch(`/api/user/watchlist?movieId=${movieId}`, { method: 'POST' });
+        e.target.reset();
+        loadWatchlist();
+    });
+
+    loadWatchlist();
+</script>
+</body>
+</html>

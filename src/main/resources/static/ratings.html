@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Ratings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+<nav class="bg-gray-800 p-4 text-white flex justify-between items-center">
+    <div class="flex items-center gap-6">
+        <h1 class="font-bold text-2xl">Reelindex</h1>
+        <a href="/index.html" class="hover:underline">Movies</a>
+        <a href="/ratings.html" class="hover:underline">My Ratings</a>
+        <a href="/watchlist.html" class="hover:underline">Watchlist</a>
+    </div>
+    <div class="flex gap-6">
+        <a href="/user.html" class="hover:underline">Profile</a>
+        <a href="/change-password.html" class="hover:underline">Change Password</a>
+    </div>
+</nav>
+<div class="max-w-5xl mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6">My Ratings</h1>
+    <div id="ratingsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</div>
+<script>
+    async function loadRatings() {
+        const res = await fetch('/api/user/ratings');
+        if (!res.ok) {
+            document.getElementById('ratingsList').textContent = 'Failed to load ratings.';
+            return;
+        }
+        const ratings = await res.json();
+        const container = document.getElementById('ratingsList');
+        container.innerHTML = '';
+        ratings.forEach(r => {
+            const el = document.createElement('div');
+            el.className = 'bg-white rounded shadow p-4 cursor-pointer hover:shadow-lg';
+            el.innerHTML = `
+            <h2 class="text-xl font-semibold mb-2">${r.movieTitle}</h2>
+            <p class="text-gray-600">Your rating: ${r.rating}</p>
+            <a href="/movie.html?id=${r.movieId}" class="text-blue-500 hover:underline mt-2 inline-block">View Movie</a>
+        `;
+            container.appendChild(el);
+        });
+    }
+    loadRatings();
+</script>
+</body>
+</html>

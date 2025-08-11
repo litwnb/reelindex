@@ -13,15 +13,13 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/user/ratings")
 @RequiredArgsConstructor
 public class MovieRatingController {
-    private static final String USER_RATINGS_PATH = "/user/ratings";
-    private static final String USER_MOVIE_RATING_PATH = "/user/ratings/{movieId}";
-
     private final MovieRatingService movieRatingService;
 
-    @PostMapping(USER_RATINGS_PATH)
-    public ResponseEntity<?> rateMovie(@RequestBody RatingRequest request,
+    @PostMapping()
+    public ResponseEntity<String> rateMovie(@RequestBody RatingRequest request,
                                        @AuthenticationPrincipal UserPrincipal userPrincipal) {
         movieRatingService.rateMovie(userPrincipal.getUser().getId(),
                                     request.getMovieId(),
@@ -29,7 +27,7 @@ public class MovieRatingController {
         return ResponseEntity.ok("Rating submitted");
     }
 
-    @GetMapping(USER_MOVIE_RATING_PATH)
+    @GetMapping("/{movieId}")
     public ResponseEntity<Integer> getMovieRating(@PathVariable("movieId") String movieId,
                                                   @AuthenticationPrincipal UserPrincipal userPrincipal) {
         UUID userId = userPrincipal.getUser().getId();
@@ -38,7 +36,7 @@ public class MovieRatingController {
         return ResponseEntity.ok(movieRatingService.getUserRating(userId, movieIdParsed));
     }
 
-    @GetMapping(USER_RATINGS_PATH)
+    @GetMapping()
     public ResponseEntity<List<UserMovieRatingDTO>> getUserRatings(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(movieRatingService.getAllRatingsByUser(userPrincipal.getUser().getId()));
     }

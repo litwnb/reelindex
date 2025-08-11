@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<form method="post" action="/perform_login" class="bg-white p-6 rounded shadow-md w-80">
+    <h1 class="text-2xl font-bold mb-6 text-center">Login</h1>
+    <label for="username" class="block mb-1">Username</label>
+    <input id="username" name="username" type="text" required class="w-full p-2 mb-4 border rounded" />
+    <label for="password" class="block mb-1">Password</label>
+    <input id="password" name="password" type="password" required class="w-full p-2 mb-6 border rounded" />
+    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Login</button>
+</form>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error')) {
+        alert('Invalid username or password.');
+    }
+    if (params.get('logout')) {
+        alert('You have been logged out.');
+    }
+</script>
+</body>
+</html>

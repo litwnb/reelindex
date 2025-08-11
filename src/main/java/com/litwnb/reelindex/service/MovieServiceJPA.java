@@ -23,14 +23,14 @@ public class MovieServiceJPA implements MovieService {
     private final MovieMapper movieMapper;
 
     private static final int DEFAULT_PAGE = 0;
-    private static final int DEFAULT_MOVIES_PER_PAGE = 50;
+    private static final int DEFAULT_MOVIES_PER_PAGE = 12;
 
     @Override
     public Page<MovieDTO> listMovies(String movieTitle, String director, Genre genre, Integer pageNumber, Integer moviesPerPage) {
-        int queryPageNumber = (pageNumber != null && pageNumber > 0) ? (pageNumber - 1) : DEFAULT_PAGE;
+        int queryPageNumber = (pageNumber != null && pageNumber >= 0) ? pageNumber : DEFAULT_PAGE;
         int queryMoviesPerPage = Objects.requireNonNullElse(moviesPerPage, DEFAULT_MOVIES_PER_PAGE);
 
-        PageRequest pageRequest = PageRequest.of(queryPageNumber, queryMoviesPerPage, Sort.by("title"));
+        Pageable pageRequest = PageRequest.of(queryPageNumber, queryMoviesPerPage, Sort.by("title"));
         Page<Movie> moviePage;
 
         if (movieTitle != null && !movieTitle.isEmpty()) {

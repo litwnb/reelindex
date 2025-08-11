@@ -6,7 +6,7 @@ import com.litwnb.reelindex.service.MovieService;
 import com.litwnb.reelindex.util.MovieErrorResponse;
 import com.litwnb.reelindex.util.MovieNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.web.PagedModel;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,28 +14,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/movies")
 @RequiredArgsConstructor
 public class MovieController {
-    public static final String MOVIE_ID = "/{movieId}";
-
     private final MovieService movieService;
 
     @GetMapping
-    public PagedModel<MovieDTO> listMovies(@RequestParam(required = false) String title,
-                                           @RequestParam(required = false) String director,
-                                           @RequestParam(required = false) Genre genre,
-                                           @RequestParam(required = false) Integer pageNumber,
-                                           @RequestParam(required = false) Integer moviesPerPage) {
-        return new PagedModel<>(movieService.listMovies(title, director, genre, pageNumber, moviesPerPage));
+    public Page<MovieDTO> listMovies(@RequestParam(required = false) String title,
+                                     @RequestParam(required = false) String director,
+                                     @RequestParam(required = false) Genre genre,
+                                     @RequestParam(required = false) Integer pageNumber,
+                                     @RequestParam(required = false) Integer moviesPerPage) {
+        return movieService.listMovies(title, director, genre, pageNumber, moviesPerPage);
     }
 
-    @GetMapping(value = MOVIE_ID)
+    @GetMapping("/{movieId}")
     public ResponseEntity<MovieDTO> getMovieById(@PathVariable("movieId") UUID movieId) {
         return ResponseEntity.ok(movieService.getMovieById(movieId));
     }
 
     @ExceptionHandler(MovieNotFoundException.class)
-    private ResponseEntity<MovieErrorResponse> handleException() {
+    public ResponseEntity<MovieErrorResponse> handleMovieNotFoundException() {
         MovieErrorResponse response = new MovieErrorResponse(
                 "Movie with this id was not found",
                 System.currentTimeMillis()
