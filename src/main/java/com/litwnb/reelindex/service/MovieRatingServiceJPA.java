@@ -8,7 +8,9 @@ import com.litwnb.reelindex.model.UserMovieRatingDTO;
 import com.litwnb.reelindex.repository.MovieRatingRepository;
 import com.litwnb.reelindex.repository.MovieRepository;
 import com.litwnb.reelindex.repository.UserRepository;
+import com.litwnb.reelindex.util.InvalidRatingException;
 import com.litwnb.reelindex.util.MovieNotFoundException;
+import com.litwnb.reelindex.util.RatingNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,7 @@ public class MovieRatingServiceJPA implements MovieRatingService {
     @Transactional
     public void rateMovie(UUID userId, UUID movieId, int rating) {
         if (rating < 1 || rating > 10)
-            throw new IllegalArgumentException("Rating must be between 1 and 10.");
+            throw new InvalidRatingException();
 
         MovieRatingKey key = new MovieRatingKey(userId, movieId);
         MovieRating movieRating = ratingRepository.findById(key)
@@ -52,7 +54,7 @@ public class MovieRatingServiceJPA implements MovieRatingService {
     public Integer getUserRating(UUID userId, UUID movieId) {
         return ratingRepository.findById(new MovieRatingKey(userId, movieId))
                 .map(MovieRating::getRating)
-                .orElse(null);
+                .orElseThrow(RatingNotFoundException::new);
     }
 
     @Override
