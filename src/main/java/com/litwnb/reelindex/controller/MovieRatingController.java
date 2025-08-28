@@ -20,7 +20,7 @@ public class MovieRatingController {
 
     @PostMapping()
     public ResponseEntity<String> rateMovie(@RequestBody RatingRequest request,
-                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
+                                            @AuthenticationPrincipal UserPrincipal userPrincipal) {
         movieRatingService.rateMovie(userPrincipal.getUser().getId(),
                                     request.getMovieId(),
                                     request.getRating());

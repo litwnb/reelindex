@@ -4,11 +4,10 @@ import com.litwnb.reelindex.model.ChangePasswordRequest;
 import com.litwnb.reelindex.model.UserDTO;
 import com.litwnb.reelindex.model.UserPrincipal;
 import com.litwnb.reelindex.service.UserService;
-import com.litwnb.reelindex.util.MovieErrorResponse;
-import com.litwnb.reelindex.util.UsernameOccupiedException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO newUser) {
-        return ResponseEntity.ok(userService.register(newUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(newUser));
     }
 
     @GetMapping()
@@ -41,12 +40,5 @@ public class UserController {
                                    request.getNewPassword(),
                                    request.getConfirmNewPassword());
         return ResponseEntity.ok("Password successfully changed.");
-    }
-
-    @ExceptionHandler(UsernameOccupiedException.class)
-    public ResponseEntity<MovieErrorResponse> handleUsernameOccupiedException() {
-        return ResponseEntity.badRequest().body(
-                new MovieErrorResponse("This user already exists", System.currentTimeMillis())
-        );
     }
 }

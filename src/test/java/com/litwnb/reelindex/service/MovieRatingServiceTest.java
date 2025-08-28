@@ -6,6 +6,8 @@ import com.litwnb.reelindex.entity.User;
 import com.litwnb.reelindex.repository.MovieRatingRepository;
 import com.litwnb.reelindex.repository.MovieRepository;
 import com.litwnb.reelindex.repository.UserRepository;
+import com.litwnb.reelindex.util.InvalidRatingException;
+import com.litwnb.reelindex.util.RatingNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -37,7 +39,7 @@ public class MovieRatingServiceTest {
 
     @Test
     void rateMovie_whenInvalidRating_throwsException() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidRatingException.class,
                 () -> ratingService.rateMovie(UUID.randomUUID(), UUID.randomUUID(), 15));
     }
 
@@ -80,11 +82,10 @@ public class MovieRatingServiceTest {
     }
 
     @Test
-    void getUserRating_whenNoRating_returnsNull() {
+    void getUserRating_whenNoRating_throwsRatingNotFoundException() {
         when(ratingRepository.findById(any())).thenReturn(Optional.empty());
 
-        Integer result = ratingService.getUserRating(UUID.randomUUID(), UUID.randomUUID());
-
-        assertNull(result);
+        assertThrows(RatingNotFoundException.class,
+                () -> ratingService.getUserRating(UUID.randomUUID(), UUID.randomUUID()));
     }
 }
