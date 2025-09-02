@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  reelindex-mysql:
+    image: mysql:8.0
+    container_name: reelindex-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootPass25
+      MYSQL_DATABASE: reelindex
+      MYSQL_PASSWORD: rootPass25
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+
+  reelindex-api:
+    build: .
+    container_name: reelindex-api
+    depends_on:
+      reelindex-mysql:
+          condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://reelindex-mysql:3306/reelindex
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootPass25
