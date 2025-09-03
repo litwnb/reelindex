@@ -33,7 +33,7 @@ public class SecurityConfiguration {
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/login.html?logout")
                         .permitAll())
                 .build();
     }
