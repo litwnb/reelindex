@@ -39,4 +39,9 @@ public class ViewController {
     public String register() {
         return "forward:/register.html";
     }
+
+    @GetMapping("/login")
+    public String login() {
+        return "forward:/login.html";
+    }
 }
