@@ -27,7 +27,7 @@ public class SecurityConfiguration {
                 .formLogin(form -> form.loginPage("/login.html")
                         .loginProcessingUrl("/perform_login")
                         .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error=true")
+                        .failureUrl("/login.html?error=true")
                         .permitAll())
                 .logout(form -> form.logoutUrl("/logout")
                         .invalidateHttpSession(true)
