@@ -24,7 +24,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auths -> auths
                         .requestMatchers("/", "/movies", "/index.html", "/login", "/register", "/swagger-ui/index.html", "/api/movies", "/api/user/register").permitAll()
                         .anyRequest().authenticated())
-                .formLogin(form -> form.loginPage("/login.html")
+                .formLogin(form -> form.loginPage("/login")
                         .loginProcessingUrl("/perform_login")
                         .defaultSuccessUrl("/", true)
                         .failureUrl("/login?error=true")
