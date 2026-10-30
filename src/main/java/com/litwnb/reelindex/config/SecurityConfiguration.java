@@ -22,7 +22,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auths -> auths
-                        .requestMatchers("/", "/movies", "/index.html", "/login", "login.html", "/register", "/register.html",
+                        .requestMatchers("/", "/movies", "/index.html", "/login", "/login.html", "/register", "/register.html",
                                 "/swagger-ui/index.html", "/api/movies", "/api/user/register").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login.html")
