@@ -6,55 +6,77 @@
     <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 font-sans">
-<nav class="bg-gray-800 p-4 text-white flex justify-between items-center">
-    <div class="flex items-center gap-6">
-        <h1 class="font-bold text-2xl">Reelindex</h1>
-        <a href="/index.html" class="hover:underline">Movies</a>
-        <a href="/ratings.html" class="hover:underline">My Ratings</a>
-        <a href="/watchlist.html" class="hover:underline">Watchlist</a>
-    </div>
-    <div class="flex gap-6">
-        <a href="/user.html" class="hover:underline">Profile</a>
-        <a href="/change-password.html" class="hover:underline">Change Password</a>
-    </div>
-</nav>
-<div class="max-w-3xl mx-auto py-8">
-    <h1 class="text-3xl font-bold mb-6">Register</h1>
-    <form id="registerForm" class="bg-white p-6 rounded shadow flex flex-col gap-4">
-        <label>
-            Username
-            <input type="text" name="username" required class="border p-2 rounded" />
-        </label>
-        <label>
-            Password
-            <input type="password" name="password" required class="border p-2 rounded" />
-        </label>
-        <button type="submit" class="bg-green-500 text-white py-2 rounded hover:bg-green-600">Register</button>
-        <p id="message" class="mt-2"></p>
-    </form>
-</div>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+<form id="registerForm" class="bg-white p-6 rounded shadow-md w-80">
+    <h1 class="text-2xl font-bold mb-6 text-center">Register</h1>
+
+    <label for="username" class="block mb-1">Username</label>
+    <input
+        id="username"
+        name="username"
+        type="text"
+        required
+        autocomplete="username"
+        class="w-full p-2 mb-4 border rounded"
+    />
+
+    <label for="password" class="block mb-1">Password</label>
+    <input
+        id="password"
+        name="password"
+        type="password"
+        required
+        autocomplete="new-password"
+        class="w-full p-2 mb-6 border rounded"
+    />
+
+    <button
+        type="submit"
+        class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+    >
+        Register
+    </button>
+
+    <p id="message" class="text-sm text-center mt-4"></p>
+
+    <p class="text-center text-sm mt-4">
+        Already have an account?
+        <a href="/login.html" class="text-blue-600 hover:underline">Login</a>
+    </p>
+</form>
+
 <script>
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+
         const data = Object.fromEntries(new FormData(e.target).entries());
-        const res = await fetch('/api/user/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
         const msg = document.getElementById('message');
-        if (res.ok) {
-            msg.textContent = 'Registration successful! Redirecting to login...';
-            msg.style.color = 'green';
-            setTimeout(() => {
-                window.location.href = "/login.html";
-            }, 1500);
-        } else {
-            msg.textContent = 'Error during registration.';
-            msg.style.color = 'red';
+
+        try {
+            const res = await fetch('/api/user/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                msg.textContent = 'Registration successful! Redirecting to login...';
+                msg.className = 'text-sm text-center mt-4 text-green-600';
+
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 1500);
+            } else {
+                msg.textContent = 'Registration failed. Please try another username.';
+                msg.className = 'text-sm text-center mt-4 text-red-600';
+            }
+        } catch (error) {
+            msg.textContent = 'Unable to connect to the server. Please try again.';
+            msg.className = 'text-sm text-center mt-4 text-red-600';
         }
     });
 </script>
+
 </body>
 </html>
